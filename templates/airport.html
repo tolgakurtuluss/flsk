@@ -87,7 +87,6 @@
             <a href="/" class="btn btn-primary">Return to Homepage</a>
             <a href="{{ url_for('get_airports_by_country', country_code=details['country_code']) }}" class="btn btn-secondary">Show other {{ details['country_code'] }} airports</a>
             <a href="{{ url_for('get_airports_by_continent', continent=details['continent']) }}" class="btn btn-secondary">Show other {{ details['continent'] }} continent</a>
-            <a href="/airlines" class="btn btn-secondary">Airlines</a>
         </div>
     </main>
 
