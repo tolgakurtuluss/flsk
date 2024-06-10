@@ -2,51 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Explore various airport destinations and airlines around the world.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airport Destinations and Airlines</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Slick Slider CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-    
-    <nav class="navbar navbar-expand-lg" aria-label="Flight routes navbar" style="border-bottom: 1px solid #eee;">
-        <div class="container-lg justify-content-start header-flex-nowrap">
-            <button class="header-button-menu" data-bs-toggle="offcanvas" data-bs-target="#offCanvas" aria-controls="offCanvas">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#333" class="bi bi-list" viewBox="0 0 16 18">
-                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
-                </svg>
-            </button>
+    <!-- Custom CSS -->
+    <style>
+        /* Set background image */
+        body {
+            background-image: url('/static/img/selcuklu2.jpg');
+            background-size: cover; /* Adjust to cover the entire viewport */
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* Keeps the background fixed while scrolling */
+        }
+        .jumbotron {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        .card-img-top {
+            height: 150px;
+            object-fit: cover;
+        }
+    </style>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/static/favicon/site.webmanifest">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" aria-label="Flight routes navbar" style="border-bottom: 1px solid #eee;">
+        <div class="container-lg">
             <a class="navbar-brand" href="/">
-                <img src="{{ url_for('static', filename='img/a.jpg') }}" class="fr-logotype" alt="My logo"  width="100" height="100">
+                <img src="{{ url_for('static', filename='img/a.jpg') }}" alt="My logo" width="100" height="100">
             </a>
-            <div class="collapse navbar-collapse" id="navbarsExample07XL">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item" style="white-space: nowrap;">
-                        <a class="nav-link active" aria-current="page" href="/airlines">Airlines</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
                     </li>
-                    <li class="nav-item" style="white-space: nowrap;">
-                        <a class="nav-link active" href="/countries">Countries</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/airports">Airports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/countries">Countries</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#">Continents</a>
                     </li>
                 </ul>
-            </div>
-            <div class="major-update">
-                <div style="display: inline-block; border-left: 1px solid #e5e5e5; padding-left: 15px;">
-                    Last data update: <strong>May 2024</strong><br>
-                    Last major update: <strong>Mar 2024</strong>
-                </div>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search Airports or Carriers" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
             </div>
         </div>
     </nav>
-</head>
 
-<body>
-    
-    
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Welcome to Airport Destinations and Airlines</h1>
+        <p class="lead">Discover information about airports, airlines, and popular routes across the globe.</p>
+        <hr class="my-4">
+        <p>Use the search bar above or explore featured sections below.</p>
+        <a class="btn btn-primary btn-lg" href="/airports" role="button">View All Airports</a>
+        <a class="btn btn-secondary btn-lg" href="/#" role="button">View All Carriers</a>
+    </div>
+
     <div class="container mt-4">
-        <h1 class="mt-5">Airport Destinations</h1>
+        <h2>Featured Airports</h2>
         <div class="row">
-            {% for airport in airports %}
-            <div class="col-md-2 mb-2">
+            {% for airport in featured_airports %}
+            <div class="col-md-3 mb-4">
                 <div class="card">
                     <img src="{{ url_for('static', filename='flags/' + airport.country_code + '.svg') }}" class="card-img-top" alt="{{ airport.AirportName }}">
                     <div class="card-body">
@@ -58,10 +89,39 @@
             </div>
             {% endfor %}
         </div>
+
+        <h2>Featured Carriers</h2>
+        <div class="row">
+            {% for carrier in featured_carriers %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="https://cdn.radarbox.com/airlines/sq/{{ carrier.ICAO }}.png" class="card-img-top" alt="{{ carrier.CrrCountry }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ carrier['CrrCountry'] }}</h5>
+                        <p class="card-text">{{ carrier['CrrDetails'] }}</p>
+                        </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h2>Popular Routes</h2>
+        <div class="row">
+            {% for route in popular_routes %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ route.origin }} to {{ route.destination }}</h5>
+                        <p class="card-text">{{ route.carrier_name }}</p>
+                        </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
+    <footer class="bg-dark text-white text-center py-3 mt-5">
         <p>© 2023 Airport Destinations and Airlines</p>
     </footer>
 
@@ -69,16 +129,5 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <style>
-        /* Set background image */
-        body {
-            background-image: url('/static/selcuklu2.jpg');
-            background-size: cover; /* Adjust to cover the entire viewport */
-            background-repeat: no-repeat;
-            background-attachment: fixed; /* Keeps the background fixed while scrolling */
-            /* You can also set background color if the image doesn't load */
-        }
-    </style>
 </body>
 </html>

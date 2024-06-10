@@ -1,4 +1,4 @@
-from flask import Flask, render_template, make_response
+from flask import Flask, render_template, make_response, send_from_directory
 import pandas as pd
 
 app = Flask(__name__)
@@ -7,21 +7,26 @@ app = Flask(__name__)
 airports_df = pd.read_excel('./database/airportcode.xlsx')
 carriers_df = pd.read_excel('./database/carriercode.xlsx')
 
-# Create a dictionary to store airport details by IATA code
-airport_details = {row['IATACode']: row for index, row in airports_df.iterrows()}
-airport_details2 = {row['country_code']: row for index, row in airports_df.iterrows()}
+# Ensure that the 'country_code' is a string
+airports_df['country_code'] = airports_df['country_code'].astype(str)
+
+# Create dictionaries to store airport details
+airport_details = airports_df.set_index('IATACode').T.to_dict()
+airport_details_by_country = airports_df.set_index('country_code').T.to_dict()
 
 @app.route('/')
 def index():
-    # Convert dataframes to HTML
-    airports_html = airports_df.to_html(classes='airports')
-    carriers_html = carriers_df.to_html(classes='carriers')
-    
-    # Ensure that the 'country_code' is a string
-    airports_df['country_code'] = airports_df['country_code'].astype(str)
-    
-    # Render index template with data
-    return render_template('index.html', airports=airports_df.to_dict(orient='records'), airports_html=airports_html, carriers_html=carriers_html)
+    # Example featured data
+    featured_airports = airports_df.sample(8).to_dict(orient='records')
+    featured_carriers = carriers_df.sample(8).to_dict(orient='records')
+    popular_routes = [
+        {'origin': 'JFK', 'destination': 'LAX', 'carrier_name': 'American Airlines'},
+        {'origin': 'LHR', 'destination': 'CDG', 'carrier_name': 'British Airways'},
+        {'origin': 'HND', 'destination': 'SFO', 'carrier_name': 'Japan Airlines'},
+        {'origin': 'DXB', 'destination': 'SYD', 'carrier_name': 'Emirates'}
+    ]
+
+    return render_template('index.html', featured_airports=featured_airports, featured_carriers=featured_carriers, popular_routes=popular_routes)
 
 @app.route('/airports/<iata_code>')
 def airport(iata_code):
@@ -30,32 +35,41 @@ def airport(iata_code):
         return render_template('airport.html', details=airport_details[iata_code])
     else:
         return "Airport not found", 404
-    
+
 @app.route('/flags/<country_code>')
 def flag(country_code):
     # Serve flag images with proper cache control
-    response = make_response(app.send_static_file(f'flags/{country_code.lower()}.svg'))
-    response.cache_control.max_age = 86400  # Cache for 1 day
-    return response
-
+    return send_from_directory('static/flags', f'{country_code.lower()}.svg', cache_timeout=86400)
 
 @app.route('/countries/<country_code>')
 def get_airports_by_country(country_code):
     # Filter the dataframe by country code
     filtered_df = airports_df[airports_df['country_code'] == country_code]
     # Convert the filtered dataframe to a dictionary
-    findf = filtered_df.to_dict(orient='records')
+    airports_by_country = filtered_df.to_dict(orient='records')
     # Render the 'country.html' template with the airports data
-    return render_template('country.html', cntairports=findf)
+    return render_template('country.html', cntairports=airports_by_country)
 
 @app.route('/continents/<continent>')
 def get_airports_by_continent(continent):
-    # Filter the dataframe by country code
+    # Filter the dataframe by continent
     filtered_df = airports_df[airports_df['continent'] == continent]
     # Convert the filtered dataframe to a dictionary
-    findf = filtered_df.to_dict(orient='records')
-    # Render the 'country.html' template with the airports data
-    return render_template('continent.html', cntairports=findf)
+    airports_by_continent = filtered_df.to_dict(orient='records')
+    # Render the 'continent.html' template with the airports data
+    return render_template('continent.html', cntairports=airports_by_continent)
+
+@app.route('/airports')
+def airports():
+    # Get list of airlines
+    return render_template('aairports.html', airports=airports_df.to_dict(orient='records'), airports_html= airports_df.to_html(classes='airports'))
+
+@app.route('/countries')
+def countries():
+    # Get list of airlines
+    return render_template('ccountries.html', airports=airports_df.to_dict(orient='records'), airports_html= airports_df.to_html(classes='airports'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
