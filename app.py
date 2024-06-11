@@ -34,11 +34,10 @@ def airport(iata_code):
     # Render a template for the specific airport using its IATA code
     if iata_code in airport_details:
         
-        '''video_id = get_first_video_id(iata_code)'''
         skyscanner_url = flights_from(iata_code)[0]
         kayak_url = flights_from(iata_code)[1]
 
-        return render_template('airport.html', details=airport_details[iata_code], video_id=video_id, skyscanner_url=skyscanner_url, kayak_url=kayak_url)
+        return render_template('airport.html', details=airport_details[iata_code], skyscanner_url=skyscanner_url, kayak_url=kayak_url)
     else:
         return "Airport not found", 404
 
