@@ -95,9 +95,9 @@
             {% for carrier in featured_carriers %}
             <div class="col-md-3 mb-4">
                 <div class="card">
-                    <img src="https://cdn.radarbox.com/airlines/sq/{{ carrier.ICAO }}.png" class="card-img-top" alt="{{ carrier.CrrCountry }}">
+                    <img src="https://images.flightroutes.com/airlines/100/{{ carrier.IATA }}_100px.png" class="card-img-top" alt="{{ carrier.CrrCountry }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ carrier['CrrCountry'] }}</h5>
+                        <h5 class="card-title">{{ carrier['Name'] }}</h5>
                         <p class="card-text">{{ carrier['CrrDetails'] }}</p>
                         </div>
                 </div>
