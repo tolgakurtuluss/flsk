@@ -34,7 +34,7 @@ def airport(iata_code):
     # Render a template for the specific airport using its IATA code
     if iata_code in airport_details:
         
-        video_id = get_first_video_id(iata_code)
+        '''video_id = get_first_video_id(iata_code)'''
         skyscanner_url = flights_from(iata_code)[0]
         kayak_url = flights_from(iata_code)[1]
 
