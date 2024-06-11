@@ -1,5 +1,6 @@
 from flask import Flask, render_template, make_response, send_from_directory
 import pandas as pd
+from duckduckgo_search import DDGS
 
 app = Flask(__name__)
 
@@ -32,7 +33,12 @@ def index():
 def airport(iata_code):
     # Render a template for the specific airport using its IATA code
     if iata_code in airport_details:
-        return render_template('airport.html', details=airport_details[iata_code])
+        
+        video_id = get_first_video_id(iata_code)
+        skyscanner_url = flights_from(iata_code)[0]
+        kayak_url = flights_from(iata_code)[1]
+
+        return render_template('airport.html', details=airport_details[iata_code], video_id=video_id, skyscanner_url=skyscanner_url, kayak_url=kayak_url)
     else:
         return "Airport not found", 404
 
@@ -69,7 +75,21 @@ def countries():
     # Get list of airlines
     return render_template('ccountries.html', airports=airports_df.to_dict(orient='records'), airports_html= airports_df.to_html(classes='airports'))
 
+def get_first_video_id(iata_code):
+    search_query = f"{iata_code} airport live takeoff/landing intitle:{iata_code} insite:youtube.com/watch?v"
+    results = DDGS().text(search_query, max_results=5)
 
+    # Assuming the first result is a YouTube video, extract the video ID from the URL
+    video_url = results[0]['href']
+    video_id = video_url.split('v=')[1]
+    
+    return video_id
+
+def flights_from(iata_code):
+    # Construct the Skyscanner URL with the dynamic airport code
+    skyscanner_url = f"https://www.skyscanner.com/flights-from/{iata_code}/"
+    kayak_url = f"https://www.kayak.com/explore/{iata_code}-anywhere"
+    return skyscanner_url, kayak_url
 
 if __name__ == '__main__':
     app.run(debug=True)
