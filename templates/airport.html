@@ -98,6 +98,12 @@
                 <a href="{{ url_for('get_airports_by_country', country_code=details['country_code']) }}" class="link-primary">Show other airports in {{ details['CountryName'] }}</a><br>
                 <a href="{{ url_for('get_airports_by_continent', continent=details['continent']) }}" class="link-secondary">Show other airports in {{ details['continent'] }} continent</a>
             </div><br>
+
+            <h3>Sectional Chart</h3>
+            <!-- Embed Skyvector -->
+            <div id="skyvector" style="width: 200px; height: 200px;">Make your <a href="https://skyvector.com/">Flight Plan</a> at SkyVector.com</div><script src="//skyvector.com/api/lchart?ll={{ details['Airport-Latitude'] }},{{ details['Airport-Longitude'] }}&amp;s=3&amp;c=sv_6329&amp;i=301" type="text/javascript"></script>
+            <script src="http://skyvector.com/perl/ad1?lat={{ details['Airport-Latitude'] }}&amp;lon={{ details['Airport-Longitude'] }}&amp;s=3&amp;c=skyvector" type="text/javascript"></script>
+            <script src="http://skyvector.com/linkchart.js" type="text/javascript"></script>
         </div>
         
         <br><hr>
