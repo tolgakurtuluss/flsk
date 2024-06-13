@@ -56,15 +56,19 @@
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="bg-primary text-white text-center py-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="/continents/{{ cntairports[0].continent }}">{{ cntairports[0].continent }}</a></li>
-                <li class="breadcrumb-item"><a href="/countries/{{ cntairports[0].country_code }}">{{ cntairports[0].CountryName }}</a></li>
-            </ol>
-        </nav>
+    <!-- Header with Jumbotron -->
+    <header class="jumbotron jumbotron-fluid bg-primary text-white text-center py-3 mb-4">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-white">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/continents/{{ cntairports[0].continent }}" class="text-white">{{ cntairports[0].continent }}</a></li>
+                    <li class="breadcrumb-item"><a href="/countries/{{ cntairports[0].country_code }}" class="text-white">{{ cntairports[0].CountryName }}</a></li>
+                </ol>
+            </nav>
+            <h1 class="display-4">Airports in {{ cntairports[0].CountryName }}</h1>
+            <p class="lead">Explore {{ cntairports.__len__() }} airports detailed below. </p>
+        </div>
     </header>
 
     <main class="container mt-4">
