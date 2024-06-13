@@ -8,7 +8,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
     <!-- Slick Slider CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
     <!-- Custom CSS -->
@@ -58,16 +60,21 @@
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="bg-primary text-white text-center py-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="/continents/{{ details.continent }}">{{ details.continent }}</a></li>
-                <li class="breadcrumb-item"><a href="/countries/{{ details.country_code }}">{{ details.CountryName }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ details.display_name }}</li>
-            </ol>
-        </nav>
+    <!-- Header with Jumbotron -->
+    <header class="jumbotron jumbotron-fluid bg-primary text-white text-center py-3 mb-4">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-white">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/continents/{{ details.continent }}" class="text-white">{{ details.continent }}</a></li>
+                    <li class="breadcrumb-item"><a href="/countries/{{ details.country_code }}" class="text-white">{{ details.CountryName }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ details.display_name }}</li>
+                    
+                </ol>
+            </nav>
+            <h1 class="display-4"><img src="{{ url_for('static', filename='flags/' + details.country_code + '.svg') }}" class="card-img-left" alt="{{ details.AirportName }}" width="50" height="50"> {{ details.display_name }}</h1>
+            <p class="lead">Discover with details below. </p>
+        </div>
     </header>
 
     <div class="container mt-4">
@@ -89,7 +96,6 @@
             <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
                 <!-- Column for the table -->
                 <div class="col-md-6">
-                    <img src="{{ url_for('static', filename='flags/' + details.country_code + '.svg') }}" class="card-img-left" alt="{{ details.AirportName }}" width="50" height="50">
                     <h1>{{ details['display_name'] }}</h1>
                     <table class="table">
                         {% for key, value in details.items() %}
@@ -101,6 +107,10 @@
                             <p>No airports found for the selected country code.</p>
                         {% endfor %}
                     </table>
+                                    
+                    <h3>Explore on map</h3>
+                    <div id="mapid" style="height: 180px; width: 100%;"></div><hr>
+
                 </div>
             </div>
             <div class="tab-pane fade" id="map" role="tabpanel" aria-labelledby="map-tab">
@@ -109,9 +119,6 @@
                     <!-- Embed FlightRadar24 -->
                     <h3>Live Traffic</h3>
                     <iframe title="FlightRadar24" class="website" type="text/html" width="100%" height="400px" src="https://www.flightradar24.com/simple_index.php?lat={{ details['Airport-Latitude'] }}&lon={{ details['Airport-Longitude'] }}&z=10" frameborder="0" allowfullscreen=""></iframe><hr>
-                
-                    <h3>Explore on map</h3>
-                    <div id="mapid" style="height: 400px; width: 100%;"></div><hr>
                     
                     <h3>Sectional Chart</h3>
                     <!-- Embed Skyvector -->
@@ -125,10 +132,11 @@
             <div class="tab-pane fade" id="links" role="tabpanel" aria-labelledby="links-tab">
                 <!-- Content for Links tab -->
                 <h3>Useful links</h3>
-                <div class="link-group">
-                    <a href="{{ url_for('get_airports_by_country', country_code=details['country_code']) }}" class="link-primary">Show other airports in {{ details['CountryName'] }}</a><br>
-                    <a href="{{ url_for('get_airports_by_continent', continent=details['continent']) }}" class="link-secondary">Show other airports in {{ details['continent'] }} continent</a>
-                </div><br>
+                <div class="link-group" style="margin-bottom: 20px;">
+                    <a href="{{ url_for('get_airports_by_country', country_code=details['country_code']) }}" class="link-primary" style="display: block; margin-bottom: 10px; text-decoration: none; color: #007bff;">Show other airports in {{ details['CountryName'] }}</a>
+                    <a href="{{ url_for('get_airports_by_continent', continent=details['continent']) }}" class="link-secondary" style="display: block; text-decoration: none; color: #007bff;">Show other airports in {{ details['continent'] }} continent</a>
+                </div>
+
             </div>
             <div class="tab-pane fade" id="flight-search" role="tabpanel" aria-labelledby="flight-search-tab">
                 <!-- Column for flight search buttons -->
@@ -158,18 +166,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         var map = L.map('mapid').setView([{{ details['Airport-Latitude'] }}, {{ details['Airport-Longitude'] }}], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
         L.marker([{{ details['Airport-Latitude'] }}, {{ details['Airport-Longitude'] }}]).addTo(map)
             .bindPopup('{{ details['display_name'] }}').openPopup();
     });
     </script>
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
 
 <style>
 /* Set background image */
