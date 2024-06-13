@@ -71,18 +71,9 @@ def airports():
 
 @app.route('/countries')
 def countries():
-    # Get list of airlines
+    # Get list of countries
     return render_template('ccountries.html', airports=airports_df.to_dict(orient='records'), airports_html= airports_df.to_html(classes='airports'))
 
-def get_first_video_id(iata_code):
-    search_query = f"{iata_code} airport live takeoff/landing intitle:{iata_code} insite:youtube.com/watch?v"
-    results = DDGS().text(search_query, max_results=5)
-
-    # Assuming the first result is a YouTube video, extract the video ID from the URL
-    video_url = results[0]['href']
-    video_id = video_url.split('v=')[1]
-    
-    return video_id
 
 def flights_from(iata_code):
     # Construct the Skyscanner URL with the dynamic airport code
