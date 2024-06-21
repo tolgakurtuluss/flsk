@@ -69,11 +69,11 @@
             {% for airport in airports %}
             <div class="col-md-2 mb-2">
                 <div class="card">
-                    <img src="{{ url_for('static', filename='flags/' + airport.country_code + '.svg') }}" class="card-img-top" alt="{{ airport.country_code }}">
+                    <img src="{{ url_for('static', filename='flags/' + airport['country_code'] + '.svg') }}" class="card-img-top" alt="{{ airport['country_code'] }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ airport.country_code }}</h5>
-                        <p class="card-text">{{ airport.CountryName }}</p>
-                        <a href="{{ url_for('get_airports_by_country', country_code=airport.country_code) }}" class="btn btn-primary">View Details</a>
+                        <h5 class="card-title">{{ airport['country_code'] }}</h5>
+                        <p class="card-text">{{ airport['CountryName'] }}</p>
+                        <a href="{{ url_for('get_airports_by_country', country_code=airport['country_code']) }}" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             </div>

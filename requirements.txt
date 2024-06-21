@@ -2,4 +2,3 @@ pandas
 Flask
 Gunicorn
 openpyxl
-duckduckgo_search

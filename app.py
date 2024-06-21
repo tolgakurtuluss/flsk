@@ -1,6 +1,5 @@
 from flask import Flask, render_template, make_response, send_from_directory
 import pandas as pd
-from duckduckgo_search import DDGS
 
 app = Flask(__name__)
 
@@ -13,7 +12,7 @@ airports_df['country_code'] = airports_df['country_code'].astype(str)
 
 # Create dictionaries to store airport details
 airport_details = airports_df.set_index('IATACode').T.to_dict()
-airport_details_by_country = airports_df.set_index('country_code').T.to_dict()
+
 
 @app.route('/')
 def index():
@@ -21,10 +20,10 @@ def index():
     featured_airports = airports_df.sample(8).to_dict(orient='records')
     featured_carriers = carriers_df.sample(8).to_dict(orient='records')
     popular_routes = [
-        {'origin': 'JFK', 'destination': 'LAX', 'carrier_name': 'American Airlines'},
-        {'origin': 'LHR', 'destination': 'CDG', 'carrier_name': 'British Airways'},
-        {'origin': 'HND', 'destination': 'SFO', 'carrier_name': 'Japan Airlines'},
-        {'origin': 'DXB', 'destination': 'SYD', 'carrier_name': 'Emirates'}
+        {'origin': 'JFK', 'destination': 'LAX', 'carrier_name': 'Defne Airlines'},
+        {'origin': 'LHR', 'destination': 'CDG', 'carrier_name': 'Aktan Airways'},
+        {'origin': 'HND', 'destination': 'SFO', 'carrier_name': 'Kurtulus Airlines'},
+        {'origin': 'DXB', 'destination': 'SYD', 'carrier_name': 'Ezgi Airlines'}
     ]
 
     return render_template('index.html', featured_airports=featured_airports, featured_carriers=featured_carriers, popular_routes=popular_routes)
@@ -71,8 +70,9 @@ def airports():
 
 @app.route('/countries')
 def countries():
+    airport_details_by_country = airports_df[['country_code', 'CountryName']].drop_duplicates().reset_index(drop=True).sort_values(by='country_code').to_dict(orient='records')
     # Get list of countries
-    return render_template('ccountries.html', airports=airports_df.to_dict(orient='records'), airports_html= airports_df.to_html(classes='airports'))
+    return render_template('ccountries.html', airports=airport_details_by_country, airports_html= airports_df.to_html(classes='airports'))
 
 
 def flights_from(iata_code):
