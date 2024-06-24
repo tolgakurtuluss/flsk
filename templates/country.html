@@ -7,8 +7,8 @@
     <title>Airport Destinations and Airlines</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Slick Slider CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <!-- Custom CSS -->
     <style>
         /* Set background image */
@@ -18,11 +18,16 @@
             background-repeat: no-repeat;
             background-attachment: fixed; /* Keeps the background fixed while scrolling */
         }
+
+        /* Style the map container */
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
     </style>
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/static/favicon/site.webmanifest">
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light" aria-label="Flight routes navbar" style="border-bottom: 1px solid #eee;">
@@ -44,9 +49,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/countries">Countries</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/#">Continents</a>
-                    </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search Airports or Carriers" aria-label="Search">
@@ -66,12 +68,18 @@
                     <li class="breadcrumb-item"><a href="/countries/{{ cntairports[0].country_code }}" class="text-black">{{ cntairports[0].CountryName }}</a></li>
                 </ol>
             </nav>
-            <h1 class="display-4">Airports in {{ cntairports[0].CountryName }}</h1>
+            <h1 class="display-4"><img src="{{ url_for('static', filename='flags/' + cntairports[0].country_code + '.svg') }}" class="card-img-left" alt="{{ cntairports[0].AirportName }}" width="70" height="70">
+                Airports in {{ cntairports[0].CountryName }}</h1>
             <p class="lead">Explore {{ cntairports.__len__() }} airports detailed below. </p>
         </div>
     </header>
 
     <main class="container mt-4">
+        <!-- Leaflet Map Section -->
+        <div id="map"></div>
+        <hr>
+
+        <!-- Airport Cards -->
         <div class="row">
             {% for airport in cntairports %}
                 <div class="col-md-3">
@@ -88,17 +96,40 @@
                 <p>No airports found for the selected country code.</p>
             {% endfor %}
         </div>
-        <div class="button-group">
-            <a href="/" class="btn btn-primary">Return to Homepage</a>
-            <a href="/countries" class="btn btn-secondary">Countries</a>
-            <a href="/airlines" class="btn btn-secondary">Airlines</a>
-        </div>
     </main>
 
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3">
-        <p>© 2023 Airport Destinations and Airlines</p>
+        <p>© 2024 Airport Destinations and Airlines</p>
     </footer>
+
+    <!-- Custom JavaScript for Leaflet Map -->
+    <script>
+        var map = L.map('map'); // Initialize Leaflet map without setting view initially
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var airports = {{ cntairports | tojson }};
+
+        airports.forEach(function(airport) {
+            var popupContent = '<b>' + airport['display_name'] + '</b><br>' +
+                               airport['TroyaDetails'] + '<br><br>' +
+                               '<a href="/airports/' + airport['IATACode'] + '">More details</a>';
+            
+            var marker = L.marker([airport['Airport-Latitude'], airport['Airport-Longitude']])
+                            .addTo(map)
+                            .bindPopup(popupContent)
+                            .openPopup();
+        });
+
+        // Fit the map to all markers with a padding of 50 pixels
+        var group = new L.featureGroup(airports.map(function(airport) {
+            return L.marker([airport['Airport-Latitude'], airport['Airport-Longitude']]);
+        }));
+        map.fitBounds(group.getBounds(), { padding: [50, 50] });
+    </script>
 
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

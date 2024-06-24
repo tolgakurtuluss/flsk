@@ -5,18 +5,14 @@
     <meta name="description" content="Explore various airport destinations and airlines around the world.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airport Destinations and Airlines</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Slick Slider CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-    <!-- Custom CSS -->
     <style>
-        /* Set background image */
         body {
             background-image: url('/static/img/selcuklu2.jpg');
-            background-size: cover; /* Adjust to cover the entire viewport */
+            background-size: cover;
             background-repeat: no-repeat;
-            background-attachment: fixed; /* Keeps the background fixed while scrolling */
+            background-attachment: fixed;
         }
         .jumbotron {
             background-color: rgba(0, 0, 0, 0.5);
@@ -33,7 +29,7 @@
     <link rel="manifest" href="/static/favicon/site.webmanifest">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" aria-label="Flight routes navbar" style="border-bottom: 1px solid #eee;" style="background-image: url('https://source.unsplash.com/featured/1280x720/?airport')">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid #eee;">
         <div class="container-lg">
             <a class="navbar-brand" href="/">
                 <img src="{{ url_for('static', filename='img/a.jpg') }}" alt="My logo" width="100" height="100">
@@ -43,18 +39,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/airports">Airports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/countries">Countries</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/#">Continents</a>
-                    </li>
+                    <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/airports">Airports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/countries">Countries</a></li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search Airports or Carriers" aria-label="Search">
@@ -74,37 +61,43 @@
     </div>
 
     <div class="container mt-4">
+        <!-- Section for Featured Airports -->
         <h2>Featured Airports</h2>
         <div class="row">
             {% for airport in featured_airports %}
             <div class="col-md-3 mb-4">
                 <div class="card">
-                    <img src="{{ url_for('static', filename='flags/' + airport.country_code + '.svg') }}" class="card-img-top" alt="{{ airport.AirportName }}">
+                    <!-- Display airport flag or placeholder if not available -->
+                    <img src="{{ url_for('static', filename='flags/' + airport.country_code + '.svg') }}" class="card-img-top" alt="Flag of {{ airport.CountryName }}" onerror="this.src='/static/img/placeholder_flag.svg';">
                     <div class="card-body">
                         <h5 class="card-title">{{ airport.display_name }}</h5>
                         <p class="card-text">{{ airport.CountryName }}</p>
-                        <a href="{{ url_for('airport', iata_code=airport.IATACode) }}" class="btn btn-primary">View Details</a>
+                        <!-- Ensure link navigates correctly even if IATACode is missing -->
+                        <a href="{{ url_for('airport', iata_code=airport.IATACode) if airport.IATACode else '#' }}" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-
+    
+        <!-- Section for Featured Carriers -->
         <h2>Featured Carriers</h2>
         <div class="row">
             {% for carrier in featured_carriers %}
             <div class="col-md-3 mb-4">
                 <div class="card">
-                    <img src="https://images.flightroutes.com/airlines/100/{{ carrier.IATA }}_100px.png" class="card-img-top" alt="{{ carrier.CrrCountry }}">
+                    <!-- Display carrier logo or placeholder if not available -->
+                    <img src="https://cdn.radarbox.com/airlines/sq/{{ carrier.ICAO }}.png" class="card-img-top" alt="Logo of {{ carrier.CrrCountry }}" onerror="this.src='/static/img/placeholder_logo.png';">
                     <div class="card-body">
-                        <h5 class="card-title">{{ carrier['Name'] }}</h5>
-                        <p class="card-text">{{ carrier['CrrDetails'] }}</p>
-                        </div>
+                        <h5 class="card-title">{{ carrier.CrrCountry }}</h5>
+                        <p class="card-text">{{ carrier.CrrDetails }}</p>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-
+    
+        <!-- Section for Popular Routes -->
         <h2>Popular Routes</h2>
         <div class="row">
             {% for route in popular_routes %}
@@ -113,19 +106,34 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ route.origin }} to {{ route.destination }}</h5>
                         <p class="card-text">{{ route.carrier_name }}</p>
-                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+    
+    <!-- Custom CSS for consistent card styling -->
+    <style>
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card-img-top {
+            height: 150px;
+            object-fit: cover;
+        }
+    </style>
+    
 
-    <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-5">
         <p>© 2023 Airport Destinations and Airlines</p>
     </footer>
 
-    <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
