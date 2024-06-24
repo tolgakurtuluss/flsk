@@ -26,16 +26,15 @@ def index():
         {'origin': 'DXB', 'destination': 'SYD', 'carrier_name': 'Ezgi Airlines'}
     ]
 
-    return render_template('index.html', featured_airports=featured_airports, featured_carriers=featured_carriers, popular_routes=popular_routes)
+    response = make_response(render_template('index.html', featured_airports=featured_airports, featured_carriers=featured_carriers, popular_routes=popular_routes))
+    response.cache_control.max_age = 300  # 5 minutes cache timeout
+    return response
 
 @app.route('/airports/<iata_code>')
 def airport(iata_code):
     # Render a template for the specific airport using its IATA code
     if iata_code in airport_details:
-        
-        skyscanner_url = flights_from(iata_code)[0]
-        kayak_url = flights_from(iata_code)[1]
-
+        skyscanner_url, kayak_url = flights_from(iata_code)
         return render_template('airport.html', details=airport_details[iata_code], skyscanner_url=skyscanner_url, kayak_url=kayak_url)
     else:
         return "Airport not found", 404
@@ -43,7 +42,10 @@ def airport(iata_code):
 @app.route('/flags/<country_code>')
 def flag(country_code):
     # Serve flag images with proper cache control
-    return send_from_directory('static/flags', f'{country_code.lower()}.svg', cache_timeout=86400)
+    filename = f'{country_code.lower()}.svg'
+    response = make_response(send_from_directory('static/flags', filename))
+    response.cache_control.max_age = 86400  # 1 day cache timeout
+    return response
 
 @app.route('/countries/<country_code>')
 def get_airports_by_country(country_code):
