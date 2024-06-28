@@ -131,10 +131,8 @@
                         <script src="https://skyvector.com/perl/ad1?lat={{ details['Airport-Latitude'] }}&lon={{ details['Airport-Longitude'] }}&s=3&c=skyvector" type="text/javascript"></script>
                         <script src="https://skyvector.com/linkchart.js" type="text/javascript"></script>
 
-                        <a class="weatherwidget-io" href="https://forecast7.com/en/40d71n74d01/{{ details['display_name'] }}/" data-label_1="label 1" data-label_2="WEATHER" data-theme="original" >label 1 WEATHER</a>
-                        <script>
-                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
-                        </script>
+                        <a href="https://metar-taf.com/{{ details['ICAOCode'] }}" id="metartaf-5TVKHpU3" style="font-size:18px; font-weight:500; color:#000; width:350px; height:278px; display:block">METAR {{ details['display_name'] }}</a>
+                        <script async defer crossorigin="anonymous" src="https://metar-taf.com/embed-js/{{ details['ICAOCode'] }}?layout=landscape&qnh=hPa&rh=rh&target=5TVKHpU3"></script>
                     </div>
                 </div>
             </div>
