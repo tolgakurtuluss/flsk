@@ -190,11 +190,9 @@
                     <h3>Useful Links</h3>
                     <div class="link-group mb-3">
                         <a href="{{ url_for('get_airports_by_country', country_code=details['country_code']) }}" class="link-primary d-block mb-2 text-decoration-none text-primary">Show other airports in {{ details['CountryName'] }}</a>
-                        <a href="{{ url_for('get_airports_by_continent', continent=details['continent']) }}" class="link-secondary d-block text-decoration-none text-primary">Show other airports in {{ details['continent'] }} continent</a>
+                        <a href="{{ url_for('get_airports_by_continent', continent=details['continent']) }}" class="link-secondary d-block text-decoration-none text-primary">Show other airports in {{ details['continent'] }} continent</a><hr>
+                        <iframe src="https://10times.com/events/nearby?lat={{ details['Airport-Latitude'] }}&lng={{ details['Airport-Longitude'] }}&event_type=0&industry=" style="border:1px #ffffff none;" name="myiFrame" scrolling="yes" frameborder="1" marginheight="0px" marginwidth="0px" height="400px" width="600px" allowfullscreen></iframe>
                     </div>
-                    <div id='10t_widget_327' style=' width:250px ';></div>
-                    <script type='text/javascript'  id='10t_event_327' src='https://c1.10times.com/js/event_widget.js'  country_id={{ details['country_code'] }} industry_id='all'  industry_name='all'  country_name={{ details['display_name'] }}></script>
-                    <script defer="" src="https://c1.10times.com/js/event_widget.js?ver=cnNfMjAyNDA3MTgxM19jb21wdXRlcg=="></script>
                 </div>
             </div>
     
